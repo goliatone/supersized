@@ -12,13 +12,75 @@
 */
 
 (function($){
-	
 	theme = {
-	 	
-	 	
+		_initialized:false,
+	 	_setSliderAnimations : function()
+	 	{
+	 		console.log("Hola, peperone " + api.totalSlides());
+	 		
+	 		/*
+	 		 * We listen for next slide events.
+	 		 */
+	 		$.supersized.api.$el.bind('nextSlideEvent',theme._nextSlideEvent);
+			/*
+	 		 * We listen for next slide events.
+	 		 */	
+			$.supersized.api.$el.bind('prevSlideEvent',theme._prevSlideEvent);
+	 	},
+	 	_resetSliderAnimations : function()
+	 	{
+	 		console.log("Hola, peperone " + api.totalSlides());
+	 		
+	 		/*
+	 		 * We listen for next slide events.
+	 		 */
+	 		$.supersized.api.$el.bind('nextSlideEvent',theme._nextSlideEvent);
+			/*
+	 		 * We listen for next slide events.
+	 		 */	
+			$.supersized.api.$el.bind('prevSlideEvent',theme._prevSlideEvent);
+	 	},
+	 	/* Event Handlers
+		----------------------------*/
+	 	_nextSlideEvent:function(event,nextslide,liveslide){
+	 		console.log("--NEXT SLIDE EVENT HANDLER");
+			var $this = $('#supersized');
+			switch($.supersized.api.options.transition){
+	    		case 6: case 'carouselRight':	// Carousel Right
+	    			nextslide.animate({left : $this.width()}, 0 ).css('visibility','visible').animate({ left:0, avoidTransforms : false }, $.supersized.vars.options.transition_speed, function(){ api.afterAnimation(); });
+					liveslide.animate({ left: -$this.width(), avoidTransforms : false }, api.options.transition_speed );
+	   			break;
+	    		case 7: case 'carouselLeft':   // Carousel Left
+	    			nextslide.animate({left : -$this.width()}, 0 ).css('visibility','visible').animate({ left:0, avoidTransforms : false }, api.options.transition_speed, function(){  api.afterAnimation(); });
+					liveslide.animate({ left: $this.width(), avoidTransforms : false }, api.options.transition_speed );
+	   			break;
+	    	}
+		    return false;	
+	 	},
+	 	_prevSlideEvent:function(event,nextslide,liveslide){
+			switch(api.options.transition){
+		   		case 6: case 'carouselRight':	// Carousel Right (reverse)
+		   			nextslide.animate({left : -api.$el.width()}, 0 ).css('visibility','visible').animate({ left:0, avoidTransforms : false }, api.options.transition_speed, function(){ api.afterAnimation(); });
+					liveslide.animate({left : 0}, 0 ).animate({ left: api.$el.width(), avoidTransforms : false}, api.options.transition_speed );
+				break;
+		   		case 7: case 'carouselLeft':   // Carousel Left (reverse)
+		   			nextslide.animate({left : api.$el.width()}, 0 ).css('visibility','visible').animate({ left:0, avoidTransforms : false }, api.options.transition_speed, function(){ api.afterAnimation(); });
+					liveslide.animate({left : 0}, 0 ).animate({ left: -api.$el.width(), avoidTransforms : false }, api.options.transition_speed );
+				break;
+		   	}
+		    return false;	
+		},
 	 	/* Initial Placement
 		----------------------------*/
 	 	_init : function(){
+	 		if(theme._initialized) return;
+	 		theme._initialized = true;
+	 		
+	 		console.log("-- THEME INIT")
+	 		/*
+	 		 * We set the transition listeners. 
+	 		 */
+	 		theme._setSliderAnimations();
 	 		
 	 		// Center Slide Links
 	 		if (api.options.slide_links) $(vars.slide_list).css('margin-left', -$(vars.slide_list).width()/2);
@@ -53,7 +115,7 @@
 			
 			// Display total slides
 			if ($(vars.slide_total).length){
-				$(vars.slide_total).html(api.options.slides.length);
+				$(vars.slide_total).html( api.totalSlides() );
 			}
 			
 			
@@ -157,7 +219,7 @@
 				// Delay progress bar on resize
 				if (api.options.progress_bar && !vars.in_animation){
 					if (vars.slideshow_interval) clearInterval(vars.slideshow_interval);
-					if (api.options.slides.length - 1 > 0) clearInterval(vars.slideshow_interval);
+					if (api.totalSlides() - 1 > 0) clearInterval(vars.slideshow_interval);
 					
 					$(vars.progress_bar).stop().animate({left : -$(window).width()}, 0 );
 					
@@ -190,7 +252,7 @@
 				}
 			});	
 			
-								
+							
 	 	},
 	 	
 	 	
@@ -256,7 +318,7 @@
 						}
 					// If previous slide direction
 					}else if(direction == 'prev'){
-						if (vars.current_slide == api.options.slides.length - 1){
+						if (vars.current_slide == api.totalSlides() - 1){
 							vars.thumb_page = Math.floor($(vars.thumb_list).width() / vars.thumb_interval) * -vars.thumb_interval;
 							if ($(vars.thumb_list).width() <= -vars.thumb_page) vars.thumb_page = vars.thumb_page + vars.thumb_interval;
 							$(vars.thumb_list).stop().animate({'left': vars.thumb_page}, {duration:500, easing:'easeOutExpo'});
@@ -334,4 +396,5 @@
 	 };
 	
 	
+		
 })(jQuery);
