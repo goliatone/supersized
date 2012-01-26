@@ -1,3 +1,11 @@
+# Supersized jQuery Plugin with gallery support
+
+This fork of the Supersized plugin adds support for multiple galleries.
+It also modifies the api to work with events.
+
+Work in progress. When done will update documentation stating all chnages and updates.
+
+
 # Supersized jQuery Plugin
 
 Documentation can be found on the official project page: [http://www.buildinternet.com/project/supersized/](http://www.buildinternet.com/project/supersized/)
