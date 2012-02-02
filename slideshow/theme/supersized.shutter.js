@@ -16,8 +16,6 @@
 		_initialized:false,
 	 	_setSliderAnimations : function()
 	 	{
-	 		console.log("Hola, peperone " + api.totalSlides());
-	 		
 	 		/*
 	 		 * We listen for next slide events.
 	 		 */
@@ -29,12 +27,10 @@
 	 	},
 	 	_resetSliderAnimations : function()
 	 	{
-	 		console.log("Hola, peperone " + api.totalSlides());
-	 		
 	 		/*
 	 		 * We listen for next slide events.
 	 		 */
-	 		$.supersized.api.$el.bind('nextSlideEvent',theme._nextSlideEvent);
+	 		$.supersized.api.$el.bind('nextSlideEvent',theme._nextSlideEvent);	 		
 			/*
 	 		 * We listen for next slide events.
 	 		 */	
@@ -73,14 +69,16 @@
 	 	/* Initial Placement
 		----------------------------*/
 	 	_init : function(){
-	 		if(theme._initialized) return;
+	 		
+	 		//if(theme._initialized) return;
+	 		if(!theme._initialized) theme._setSliderAnimations();
 	 		theme._initialized = true;
 	 		
 	 		console.log("-- THEME INIT")
 	 		/*
 	 		 * We set the transition listeners. 
 	 		 */
-	 		theme._setSliderAnimations();
+//	 		theme._setSliderAnimations();
 	 		
 	 		// Center Slide Links
 	 		if (api.options.slide_links) $(vars.slide_list).css('margin-left', -$(vars.slide_list).width()/2);
@@ -169,10 +167,16 @@
 		    
 		    	// Full Opacity on Hover
 		    	if(jQuery.support.opacity){
-			    	$(vars.prev_slide +','+vars.next_slide).mouseover(function() {
-					   $(this).stop().animate({opacity:1},100);
+			    	$(vars.prev_slide).mouseover(function() {
+					   $(this).stop().animate({"left":"0px"},100);
 					}).mouseout(function(){
-					   $(this).stop().animate({opacity:0.6},100);
+					   $(this).stop().animate({"left":"-10px"},100);
+					});
+					
+					$(vars.next_slide).mouseover(function() {
+					   $(this).stop().animate({"right":"0px"},100);
+					}).mouseout(function(){
+					   $(this).stop().animate({"right":"-10px"},100);
 					});
 				}
 			
@@ -188,6 +192,7 @@
 			}
 			
 		    $(vars.play_button).click(function() {
+		    	console.log("--THEME PLAY BUTTON");
 				api.playToggle();						    
 		    });
 			
@@ -267,13 +272,14 @@
 	 	
 	 	/* Play & Pause Toggle
 		----------------------------*/
-	 	playToggle : function(state){
-	 		
+	 	playToggle : function(state){	 		
 	 		if (state =='play'){
+	 			console.log("--THEME PLAY TOGGLE: play");
 	 			// If image, swap to pause
 	 			if ($(vars.play_button).attr('src')) $(vars.play_button).attr("src", vars.image_path + "pause.png");
 				if (api.options.progress_bar && !vars.is_paused) theme.progressBar();
 	 		}else if (state == 'pause'){
+	 			console.log("--THEME PLAY TOGGLE: pause");
 	 			// If image, swap to play
 	 			if ($(vars.play_button).attr('src')) $(vars.play_button).attr("src", vars.image_path + "play.png");
         		if (api.options.progress_bar && vars.is_paused)$(vars.progress_bar).stop().animate({left : -$(window).width()}, 0 );
@@ -349,7 +355,19 @@
     		$(vars.progress_bar).stop().animate({left : -$(window).width()}, 0 ).animate({ left:0 }, api.options.slide_interval);
     	}
 	 	
-	 
+	 	/**/
+	 	,show:function(){
+	 		$('#controls-holder').fadeTo("fast",1);
+	 		$('#prevslide').fadeTo("fast",1);
+	 		$('#nextslide').fadeTo("fast",1);
+	 		 
+	 		
+	 	}
+	 	,hide:function(){
+	 		$('#controls-holder').fadeTo("fast",0);
+	 		$('#prevslide').fadeTo("fast",0);
+	 		$('#nextslide').fadeTo("fast",0);
+	 	}
 	 };
 	 
 	 

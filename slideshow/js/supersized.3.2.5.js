@@ -43,7 +43,10 @@
 		base.init = function(){
 			console.log("-INITIALIZING!");
 			
-        	// Combine options and vars
+        	/**
+        	 * Combine options and vars
+        	 * Too involved...fix(?).
+        	 */
         	$.supersized.vars = $.extend($.supersized.vars, $.supersized.themeVars);
         	$.supersized.vars.options = $.extend({},$.supersized.defaultOptions, $.supersized.themeOptions, options);
             base.options = $.supersized.vars.options;
@@ -61,6 +64,8 @@
         base._reset = function(){
         	clearInterval(vars.slideshow_interval);	
         	$(base.el + ' li').remove();
+        	$(vars.thumb_list).remove();
+        	
         }
         
         /* Build Elements
@@ -236,6 +241,8 @@
 			// Call theme function for before slide transition
 			if( typeof theme != 'undefined' && typeof theme.beforeAnimation == "function" ) theme.beforeAnimation('next');
 			$('.load-item').show();
+			
+			base.$el.trigger("supersizedLaunchEvent");
 			
 			// Keyboard Navigation
 			if (base.options.keyboard_nav){
@@ -654,11 +661,13 @@
 		/* Play/Pause Toggle
 		----------------------------*/
 		base.playToggle = function(){
-		
+			console.log("- PLAY TOOGLE");
 			if (vars.in_animation || !api.options.slideshow) return false;		// Abort if currently animating
 			
+			console.log("- PLAY TOOGLE: ANIMATION AND SLIDESHOW TRUE OR SLIDESHOW NOT FALSE");
+			
 			if (vars.is_paused){
-				
+				console.log("- PLAY TOOGLE: IS PAUSED");
 				vars.is_paused = false;
 				
 				// Call theme function for play
@@ -668,7 +677,7 @@
 	        	vars.slideshow_interval = setInterval(base.nextSlide, base.options.slide_interval);
 	        	  
         	} else {
-        		
+        		console.log("- PLAY TOOGLE: IS NOT PAUSED");
         		vars.is_paused = true;
         		
         		// Call theme function for pause
@@ -775,7 +784,7 @@
 				
 				base.nextSlide();
 				
-			}else if (place == 'prev'){
+			} else if (place == 'prev'){
 			
 				vars.current_slide - 1 < 0  ? loadSlide = base.totalSlides() - 1 : loadSlide = vars.current_slide - 1;	// Determine next slide
 				
